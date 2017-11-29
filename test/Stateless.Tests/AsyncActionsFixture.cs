@@ -182,7 +182,7 @@ namespace Stateless.Tests
 
             await sm.ActivateAsync();
 
-            Assert.Equal(true, activated); // Should await action
+            Assert.True(activated); // Should await action
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace Stateless.Tests
             await sm.ActivateAsync();
             await sm.DeactivateAsync();
 
-            Assert.Equal(true, deactivated); // Should await action
+            Assert.True(deactivated); // Should await action
         }
 
         [Fact]

@@ -114,9 +114,9 @@ namespace Stateless.Tests
 
             var permitted = sm.PermittedTriggers;
 
-            Assert.True(permitted.Contains(Trigger.X));
-            Assert.True(permitted.Contains(Trigger.Y));
-            Assert.False(permitted.Contains(Trigger.Z));
+            Assert.Contains(Trigger.X, permitted);
+            Assert.Contains(Trigger.Y, permitted);
+            Assert.DoesNotContain(Trigger.Z, permitted);
         }
 
         [Fact]
@@ -132,7 +132,7 @@ namespace Stateless.Tests
                 .Permit(Trigger.X, State.B);
 
             var permitted = sm.PermittedTriggers;
-            Assert.Equal(1, permitted.Count());
+            Assert.Single(permitted);
             Assert.Equal(Trigger.X, permitted.First());
         }
 
@@ -144,7 +144,7 @@ namespace Stateless.Tests
             sm.Configure(State.B)
                 .PermitIf(Trigger.X, State.A, () => false);
 
-            Assert.Equal(0, sm.PermittedTriggers.Count());
+            Assert.Empty(sm.PermittedTriggers);
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace Stateless.Tests
                     new Tuple<Func<bool>, string>(() => true, "1"),
                     new Tuple<Func<bool>, string>(() => false, "2"));
 
-            Assert.Equal(0, sm.PermittedTriggers.Count());
+            Assert.Empty(sm.PermittedTriggers);
         }
 
         [Fact]
@@ -246,7 +246,7 @@ namespace Stateless.Tests
         {
             var sm = new StateMachine<State, Trigger>(State.A);
             var exception = Assert.Throws<InvalidOperationException>(() => sm.Fire(Trigger.X));
-            Assert.Equal(exception.Message, "No valid leaving transitions are permitted from state 'A' for trigger 'X'. Consider ignoring the trigger.");
+            Assert.Equal("No valid leaving transitions are permitted from state 'A' for trigger 'X'. Consider ignoring the trigger.", exception.Message);
         }
 
         [Fact]
@@ -259,7 +259,7 @@ namespace Stateless.Tests
             var sm = new StateMachine<State, Trigger>(State.A);
             sm.Configure(State.A).PermitIf(Trigger.X, State.B, () => false, guardDescription);
             var exception = Assert.Throws<InvalidOperationException>(() => sm.Fire(Trigger.X));
-            Assert.Equal(exception.Message, "Trigger 'X' is valid for transition from state 'A' but a guard conditions are not met. Guard descriptions: 'test'.");
+            Assert.Equal("Trigger 'X' is valid for transition from state 'A' but a guard conditions are not met. Guard descriptions: 'test'.", exception.Message);
         }
 
         [Fact]
@@ -271,7 +271,7 @@ namespace Stateless.Tests
                 new Tuple<Func<bool>, string>(() => false, "test2"));
 
             var exception = Assert.Throws<InvalidOperationException>(() => sm.Fire(Trigger.X));
-            Assert.Equal(exception.Message, "Trigger 'X' is valid for transition from state 'A' but a guard conditions are not met. Guard descriptions: 'test1, test2'.");
+            Assert.Equal("Trigger 'X' is valid for transition from state 'A' but a guard conditions are not met. Guard descriptions: 'test1, test2'.", exception.Message);
         }
 
         [Fact]
@@ -371,7 +371,7 @@ namespace Stateless.Tests
         {
             var sm = new StateMachine<State, Trigger>(State.A);
 
-            Assert.Throws(typeof(ArgumentException),  () => { sm.Configure(State.A).SubstateOf(State.A); });
+            Assert.Throws<ArgumentException>(() => { sm.Configure(State.A).SubstateOf(State.A); });
         }
 
         [Fact]
@@ -380,7 +380,7 @@ namespace Stateless.Tests
             var sm = new StateMachine<State, Trigger>(State.A);
             sm.Configure(State.B).SubstateOf(State.A);
 
-            Assert.Throws(typeof(ArgumentException), () => { sm.Configure(State.A).SubstateOf(State.B); });
+            Assert.Throws<ArgumentException>(() => { sm.Configure(State.A).SubstateOf(State.B); });
         }
 
         [Fact]
@@ -390,7 +390,7 @@ namespace Stateless.Tests
             sm.Configure(State.B).SubstateOf(State.A);
             sm.Configure(State.C).SubstateOf(State.B);
 
-            Assert.Throws(typeof(ArgumentException), () => { sm.Configure(State.A).SubstateOf(State.C); });
+            Assert.Throws<ArgumentException>(() => { sm.Configure(State.A).SubstateOf(State.C); });
         }
 
         [Fact]
@@ -403,7 +403,7 @@ namespace Stateless.Tests
             sm.Configure(State.C);
             sm.Configure(State.A).SubstateOf(State.C);
 
-            Assert.Throws(typeof(ArgumentException), () => { sm.Configure(State.C).SubstateOf(State.B); });
+            Assert.Throws<ArgumentException>(() => { sm.Configure(State.C).SubstateOf(State.B); });
         }
 
         [Fact]

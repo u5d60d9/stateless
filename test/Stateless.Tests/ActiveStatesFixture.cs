@@ -51,7 +51,7 @@ namespace Stateless.Tests
             actualOrdering.Clear();
             sm.Activate();
 
-            Assert.Equal(0, actualOrdering.Count);
+            Assert.Empty(actualOrdering);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Stateless.Tests
             actualOrdering.Clear();
             sm.Activate();
 
-            Assert.Equal(0, actualOrdering.Count);
+            Assert.Empty(actualOrdering);
         }
 
         [Fact]
